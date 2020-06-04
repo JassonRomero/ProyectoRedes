@@ -5,6 +5,13 @@
  */
 package proyectoredes;
 
+import Server.Server;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
+import org.jdom.JDOMException;
+
 /**
  *
  * @author Romero
@@ -14,8 +21,16 @@ public class ProyectoRedes {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    public static void main(String[] args) throws IOException {
+        try {
+            Server servidor = new Server(5025);
+            servidor.setVisible(true);
+            servidor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            servidor.setLocationRelativeTo(null);
+            servidor.setResizable(false);
+        } catch (JDOMException ex) {
+            Logger.getLogger(ProyectoRedes.class.getName()).log(Level.SEVERE, null, ex);
+        } 
     }
     
 }
