@@ -7,6 +7,7 @@ package Server;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -20,8 +21,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.jdom.JDOMException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
@@ -99,15 +101,33 @@ public class Server extends JFrame implements Runnable, ActionListener {
             try {
                 Conectar conect = new Conectar();
                 Connection conectar = conect.conexion();
-                PreparedStatement pst = conectar.prepareStatement("call insert_Usuario(?,?)");
-                pst.setString(1, this.textCliente.getText());
-                pst.setString(2, this.textContrasena.getText());
+                Statement pst = conectar.createStatement();
+                ResultSet rs = pst.executeQuery("call validar_Usuario('" + this.textCliente.getText() + "')");
+                String i = "";
+                while (rs.next()) {
 
-                if (0 < pst.executeUpdate()) {
+                    i = rs.getString("nombre");
+
+                    System.out.println("nombre = " + i + " contrasena");
+                }
+
+                if (i.equals("")) {
+                    pst.executeQuery("call insert_Usuario('" + this.textCliente.getText() + "','" + this.textContrasena.getText() + "')");
+                    File directorio = new File("Usuarios\\" + this.textCliente.getText());
+                    if (!directorio.exists()) {
+                        if (directorio.mkdirs()) {
+                            System.out.println("Directorio creado");
+                        } else {
+                            System.out.println("Error al crear directorio");
+                        }
+                    }
                     this.textCliente.setText("");
                     this.textContrasena.setText("");
                     System.out.println("exito");
+                } else {
+                    System.out.println("El usuario ya existe");
                 }
+                conectar.close();
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
