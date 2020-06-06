@@ -1,6 +1,7 @@
 package Utility;
 
 public class Utility {
+
     public final static String ENVIARARCHIVO = "enviararchivo";
     public final static String DESCARGARARCHIVO = "descargararchivo";
     public final static String AVISOENVIO = "avisoenvio";
