@@ -30,7 +30,7 @@ public class ProyectoRedes {
             servidor.setResizable(false);
         } catch (JDOMException ex) {
             Logger.getLogger(ProyectoRedes.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
-    
+
 }

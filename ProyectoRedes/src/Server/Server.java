@@ -30,7 +30,7 @@ import java.sql.SQLException;
 public class Server extends JFrame implements Runnable, ActionListener {
 
     private int socketPortNumber;
-    
+
     private JLabel labelIpServidor, labelCliente, labelContrasena;
     JTextField textCliente;
     JPasswordField textContrasena;

@@ -63,7 +63,7 @@ public class HiloClient extends Thread {
     private void enviarArchivo() throws FileNotFoundException, IOException {
         if (!this.filename.equalsIgnoreCase("")) {
             int lectura;
-            
+
             BufferedInputStream outputFile = new BufferedInputStream(new FileInputStream(new File(this.filename)));
 
             byte byteArray[] = new byte[1024];
@@ -87,31 +87,31 @@ public class HiloClient extends Thread {
     public void descargarArchivo() throws IOException {
         this.send.writeUTF(Utility.AVISODESCARGA);
         this.send.writeUTF(this.archivoADescargar);
-        
+
         String mensaje = this.receive.readUTF();
-        
+
         if (!mensaje.equalsIgnoreCase(Utility.CONFIRMADO)) {
             System.err.println("No se puede recibir el archivo del servidor");
-            
+
             this.accion = "";
             this.archivoADescargar = "";
-        
+
             return;
         }
-        
+
         byte receivedData[] = new byte[1024];
         int lectura;
-        
+
         /* Para guardar fichero recibido */
         BufferedOutputStream archivoRecibido = new BufferedOutputStream(new FileOutputStream(new File(this.receive.readUTF())));
-       
+
         while ((lectura = this.receive.read(receivedData)) != -1) {
             archivoRecibido.write(receivedData, 0, lectura);
         }
-        
+
         this.accion = "";
         this.archivoADescargar = "";
-        
+
         archivoRecibido.close();
     }
 
