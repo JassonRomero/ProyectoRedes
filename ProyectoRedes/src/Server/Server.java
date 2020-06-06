@@ -19,6 +19,9 @@ import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.jdom.JDOMException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  *
@@ -27,7 +30,7 @@ import org.jdom.JDOMException;
 public class Server extends JFrame implements Runnable, ActionListener {
 
     private int socketPortNumber;
-
+    
     private JLabel labelIpServidor, labelCliente, labelContrasena;
     JTextField textCliente;
     JPasswordField textContrasena;
@@ -92,6 +95,22 @@ public class Server extends JFrame implements Runnable, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (ae.getSource() == this.buttonRegistrar) {
+            try {
+                Conectar conect = new Conectar();
+                Connection conectar = conect.conexion();
+                PreparedStatement pst = conectar.prepareStatement("call insert_Usuario(?,?)");
+                pst.setString(1, this.textCliente.getText());
+                pst.setString(2, this.textContrasena.getText());
+
+                if (0 < pst.executeUpdate()) {
+                    this.textCliente.setText("");
+                    this.textContrasena.setText("");
+                    System.out.println("exito");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
