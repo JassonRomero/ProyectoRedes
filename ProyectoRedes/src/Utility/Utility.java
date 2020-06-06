@@ -9,4 +9,5 @@ public class Utility {
     public final static String CONFIRMADO = "confirmado";
     public final static String DENEGADO = "denegado";
     public final static String AVISOLISTAR="avisolistar";
+    public final static int SOCKETNUMBER=21;
 }
