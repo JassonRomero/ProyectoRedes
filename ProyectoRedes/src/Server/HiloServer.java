@@ -86,7 +86,6 @@ public class HiloServer extends Thread {
         if (archivo.exists()) {
             this.send.writeUTF(Utility.CONFIRMADO);
             int lectura;
-
             BufferedInputStream outputFile = new BufferedInputStream(new FileInputStream(archivo));
 
             byte byteArray[] = new byte[1024];
