@@ -19,6 +19,7 @@ public class HiloClient extends Thread {
     private String accion;
     private String filename;
     private String archivoADescargar;
+    private String listaDeArchivos[];
 
     private Socket socket;
 
@@ -30,6 +31,7 @@ public class HiloClient extends Thread {
         this.accion = "";
         this.filename = "";
         this.archivoADescargar = "";
+        this.listaDeArchivos = null;
         this.socket = new Socket();
         this.send = new DataOutputStream(this.socket.getOutputStream());
         this.receive = new DataInputStream(this.socket.getInputStream());
@@ -40,6 +42,7 @@ public class HiloClient extends Thread {
         this.accion = "";
         this.filename = "";
         this.archivoADescargar = "";
+        this.listaDeArchivos = null;
         this.socket = socket;
         this.send = new DataOutputStream(this.socket.getOutputStream());
         this.receive = new DataInputStream(this.socket.getInputStream());
@@ -63,7 +66,7 @@ public class HiloClient extends Thread {
     private void enviarArchivo() throws FileNotFoundException, IOException {
         if (!this.filename.equalsIgnoreCase("")) {
             int lectura;
-            
+
             BufferedInputStream outputFile = new BufferedInputStream(new FileInputStream(new File(this.filename)));
 
             byte byteArray[] = new byte[1024];
@@ -87,32 +90,26 @@ public class HiloClient extends Thread {
     public void descargarArchivo() throws IOException {
         this.send.writeUTF(Utility.AVISODESCARGA);
         this.send.writeUTF(this.archivoADescargar);
-        
+
         String mensaje = this.receive.readUTF();
-        
-        if (!mensaje.equalsIgnoreCase(Utility.CONFIRMADO)) {
-            System.err.println("No se puede recibir el archivo del servidor");
-            
-            this.accion = "";
-            this.archivoADescargar = "";
-        
-            return;
-        }
-        
-        byte receivedData[] = new byte[1024];
-        int lectura;
-        
-        /* Para guardar fichero recibido */
-        BufferedOutputStream archivoRecibido = new BufferedOutputStream(new FileOutputStream(new File(this.receive.readUTF())));
-       
-        while ((lectura = this.receive.read(receivedData)) != -1) {
-            archivoRecibido.write(receivedData, 0, lectura);
+
+        if (mensaje.equalsIgnoreCase(Utility.CONFIRMADO)) {
+            byte receivedData[] = new byte[1024];
+            int lectura;
+
+            /* Para guardar fichero recibido */
+            BufferedOutputStream archivoRecibido = new BufferedOutputStream(new FileOutputStream(new File(this.archivoADescargar)));
+
+            while ((lectura = this.receive.read(receivedData)) != -1) {
+                archivoRecibido.write(receivedData, 0, lectura);
+            }
+            archivoRecibido.close();
+        } else {
+            System.err.println("No existe el archivo en el servidor");
         }
         
         this.accion = "";
         this.archivoADescargar = "";
-        
-        archivoRecibido.close();
     }
 
     public boolean isExecute() {
@@ -129,5 +126,29 @@ public class HiloClient extends Thread {
 
     public void setAccion(String accion) {
         this.accion = accion;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getArchivoADescargar() {
+        return archivoADescargar;
+    }
+
+    public void setArchivoADescargar(String archivoADescargar) {
+        this.archivoADescargar = archivoADescargar;
+    }
+
+    public String[] getListaDeArchivos() {
+        return listaDeArchivos;
+    }
+
+    public void setListaDeArchivos(String[] listaDeArchivos) {
+        this.listaDeArchivos = listaDeArchivos;
     }
 }

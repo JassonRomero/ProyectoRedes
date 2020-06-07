@@ -41,7 +41,7 @@ public class HiloServer extends Thread {
                     String respuesta = receive.readLine();
                     System.out.println(respuesta);
                     switch (respuesta) {
-                        
+
                     }
                 }
             } while (true);

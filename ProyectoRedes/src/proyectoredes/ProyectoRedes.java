@@ -5,6 +5,7 @@
  */
 package proyectoredes;
 
+import GUI.Client;
 import Server.Server;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -23,14 +24,25 @@ public class ProyectoRedes {
      */
     public static void main(String[] args) throws IOException {
         try {
+            /*
+            try {
             Server servidor = new Server(5025);
             servidor.setVisible(true);
             servidor.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             servidor.setLocationRelativeTo(null);
             servidor.setResizable(false);
+            } catch (JDOMException ex) {
+            Logger.getLogger(ProyectoRedes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            */
+            Client c = new Client();
+            c.setVisible(true);
+            c.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            c.setLocationRelativeTo(null);
+            c.setResizable(false);
         } catch (JDOMException ex) {
             Logger.getLogger(ProyectoRedes.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
-    
+
 }
