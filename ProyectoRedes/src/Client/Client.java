@@ -1,26 +1,25 @@
 package Client;
 
-import Client.HiloClient;
 import Server.Conectar;
+import Server.Server;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.net.Socket;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.jdom.JDOMException;
 
-public class Client extends JFrame implements Runnable, ActionListener {
-
-    private Thread hilo;
+public class Client extends JFrame implements ActionListener {
 
     private JLabel labelIp;
     private JLabel labelId;
@@ -41,11 +40,7 @@ public class Client extends JFrame implements Runnable, ActionListener {
         this.setSize(250, 250);
 
         init();
-        
-        this.cliente = new HiloClient(new Socket("192.168.1.1", Utility.Utility.SOCKETNUMBER));
-        
-        this.hilo = new Thread(this);
-        this.hilo.start();
+
     }
 
     private void init() throws JDOMException, IOException {
@@ -80,32 +75,44 @@ public class Client extends JFrame implements Runnable, ActionListener {
     }
 
     @Override
-    public void run() {
-
-    }
-
-    @Override
     public void actionPerformed(ActionEvent ae) {
+
         if (ae.getSource() == this.botonIniciar) {
-            /*
-            Conectar conect = new Conectar();
-            Connection conectar = conect.conexion();
-            PreparedStatement pst = conectar.prepareStatement("");
-            pst.setString(1, this.textId.getText());
-            pst.setString(2, this.textPassword.getText());
-            if (0 < pst.executeUpdate()) {
-            this.textId.setText("");
-            this.textIp.setText("");
-            this.textPassword.setText("");
-            this.dispose();
+
+            try {
+                Conectar conect = new Conectar();
+                Connection conectar = conect.conexion();
+                Statement pst = conectar.createStatement();
+                ResultSet rs = pst.executeQuery("call get_Usuario('" + this.textId.getText() + "','"+this.textPassword.getText()+"')");
+                String i = "";
+                while (rs.next()) {
+
+                    i = rs.getString("nombre");
+
+                    System.out.println("nombre = " + i);
+                }
+
+                if (i.equals(this.textId.getText())) {
+                    this.dispose();
+
+                    this.cliente = new HiloClient(this.textIp.getText().trim(),this.textId.getText().trim());
+                    
+                    VentanaPrincipal ventana = new VentanaPrincipal(this.cliente);
+                    ventana.setVisible(true);
+                    ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    ventana.setLocationRelativeTo(null);
+                    ventana.setResizable(false);
+                    System.out.println("exito");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Datos ingresados incorrecto");
+                }
+                conectar.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
-             */ 
-            this.dispose();
-            VentanaPrincipal ventana = new VentanaPrincipal(this.cliente);
-            ventana.setVisible(true);
-            ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            ventana.setLocationRelativeTo(null);
-            ventana.setResizable(false);
+
         }
     }
 }

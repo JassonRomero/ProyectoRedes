@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.net.ssl.SSLServerSocketFactory;
 
 /**
  *
@@ -31,19 +32,20 @@ import java.sql.Statement;
  */
 public class Server extends JFrame implements Runnable, ActionListener {
 
-    private int socketPortNumber;
-
-    private JLabel labelIpServidor, labelCliente, labelContrasena;
-    JTextField textCliente;
-    JPasswordField textContrasena;
-    JButton buttonRegistrar;
+    private JLabel labelIpServidor;
+    private JLabel labelCliente;
+    private JLabel labelContrasena;
+    
+    private JTextField textCliente;
+    private JPasswordField textContrasena;
+    private JButton buttonRegistrar;
+    
     private Thread hilo;
 
-    public Server(int socketPortNumber) throws JDOMException, IOException {
+    public Server() throws JDOMException, IOException {
         super("Server");
         this.setLayout(null);
         this.setSize(300, 300);
-        this.socketPortNumber = socketPortNumber;
         init();
         this.hilo = new Thread(this);
         this.hilo.start();
@@ -79,13 +81,16 @@ public class Server extends JFrame implements Runnable, ActionListener {
     @Override
     public void run() {
         try {
-            ServerSocket serverSocket = new ServerSocket(this.socketPortNumber);
+            ServerSocket serverSocket = new ServerSocket(Utility.Utility.SOCKETNUMBER);
+            
             InetAddress address = InetAddress.getLocalHost();
+
             this.labelIpServidor.setText(String.valueOf(address));
             do {
                 Socket socket = serverSocket.accept();
                 HiloServer hiloServer = new HiloServer(socket);
                 hiloServer.start();
+                System.out.println("Nueva conexion");
             } while (true);
 
         } catch (IOException ex) {
