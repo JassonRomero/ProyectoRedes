@@ -1,32 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Server;
 
 import Utility.Utility;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.jdom.JDOMException;
 
-/**
- *
- * @author Jasson
- */
 public class HiloServer extends Thread {
 
     private boolean execute;
@@ -66,37 +52,37 @@ public class HiloServer extends Thread {
         try {
             do {
                 this.accion = this.receive.readUTF();
-                if (this.accion.equalsIgnoreCase(Utility.AVISOLISTAR)) {
+                System.out.println(this.accion);
+                if (this.accion.equalsIgnoreCase(Utility.IDENTIFICAR)) {
+                    this.rutaCarpeta = this.receive.readUTF();
+                    System.out.println("Nombre es: " + this.rutaCarpeta);
+                    this.accion = "";
+                } else if (this.accion.equalsIgnoreCase(Utility.AVISOLISTAR)) {
                     listarArchivos();
                 } else if (this.accion.equalsIgnoreCase(Utility.AVISODESCARGA)) {
                     enviarArchivo();
                 } else if (this.accion.equalsIgnoreCase(Utility.AVISOENVIO)) {
                     recibirArchivo();
-                    listarArchivos();
                 }
             } while (this.execute);
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
         }
     }
 
     private void enviarArchivo() throws FileNotFoundException, IOException {
         this.filename = this.receive.readUTF();
-        File archivo = new File(this.rutaCarpeta + "\\" + this.filename);
+        File archivo = new File("Usuarios" + "//" + this.rutaCarpeta + "//" + this.filename);
         if (archivo.exists()) {
             this.send.writeUTF(Utility.CONFIRMADO);
-            int lectura;
-            BufferedInputStream outputFile = new BufferedInputStream(new FileInputStream(archivo));
 
-            byte byteArray[] = new byte[1024];
-
-            while ((lectura = outputFile.read(byteArray)) != -1) {
-                this.send.write(byteArray, 0, lectura);
-            }
-
+            byte byteArray[] = null;
+            byteArray = Files.readAllBytes(Paths.get("Usuarios" + "//" + this.rutaCarpeta + "//" + this.filename));
+            this.send.write(byteArray);
+            this.send.flush();
+      
             this.accion = "";
             this.filename = "";
-            outputFile.close();
         } else {
             this.send.writeUTF(Utility.DENEGADO);
         }
@@ -105,31 +91,38 @@ public class HiloServer extends Thread {
     public void recibirArchivo() throws IOException {
         this.filename = this.receive.readUTF();
 
-        byte receivedData[] = new byte[1024];
-        int lectura;
+        byte readbytes[] = new byte[1024];
+        InputStream in = this.socket.getInputStream();
 
-        /* Para guardar fichero recibido */
-        BufferedOutputStream archivoRecibido = new BufferedOutputStream(new FileOutputStream(new File(this.rutaCarpeta + "\\" + this.filename)));
-
-        while ((lectura = this.receive.read(receivedData)) != -1) {
-            archivoRecibido.write(receivedData, 0, lectura);
+        try (OutputStream file = Files.newOutputStream(Paths.get("Usuarios" + "//" + this.rutaCarpeta + "//" + this.filename))) {
+            for (int read = -1; (read = in.read(readbytes)) >= 0;) {
+                file.write(readbytes, 0, read);
+                if (read < 1024) {
+                    break;
+                }
+            }
+            file.flush();
         }
+        
+        this.receive = new DataInputStream(this.socket.getInputStream());
+        in.close();
         this.accion = "";
-        this.filename = "";
-
-        archivoRecibido.close();
+        this.filename="";
+        System.out.println("Acaba de recibir");
     }
 
     public void listarArchivos() throws IOException {
-        File carpeta = new File(this.rutaCarpeta);
+        File carpeta = new File("Usuarios" + "//" + this.rutaCarpeta);
         String[] listado = carpeta.list();
         if (listado == null || listado.length == 0) {
             System.out.println("No hay elementos dentro de la carpeta actual");
+            this.send.writeUTF(Utility.DENEGADO);
         } else {
+            this.send.writeUTF(""+listado.length);
             for (int i = 0; i < listado.length; i++) {
                 this.send.writeUTF(listado[i]);
-                //System.out.println(listado[i]);
             }
         }
+        
     }
 }
