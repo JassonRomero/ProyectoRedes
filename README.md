@@ -1,5 +1,14 @@
-# ProyectoRedes
+# Proyecto de Redes y comunicación de datos
+
 Servidor FTP
-Se debe tener instalado en el ordenador el Java Runtime Environment: https://www.java.com/es/download/
-Es necesario tener acceso a internet ya que se hace consulta a base de datos externas.
-Para poder ejecutar el poryecto debe tener instalado el JDK junto netbeans se recomienda instalar mediante https://www.oracle.com/technetwork/es/java/javase/downloads/jdk-netbeans-jsp-3413139-esa.html, aqui apenas selecciona la versión necesaria para su equipo. 
+
+La intención de este proyecto es emular la funcionalidad de la aplicación Dropbox, la cual
+consiste en almacenar archivos en la nube (Respaldarlos), desde cada dispositivo cliente 
+
+Para poder ejecutar el código de éste repositorio se necesita de un Entorno de Desarrollo
+Integrado (IDE) llamado NetBeans, pero además de ello y puesto que la aplicación está 
+escrita en código Java son necesarios dos programas adicionales, que son los siguientes, 
+Java Runtime Environment (JRE) que se puede descargar en https://www.java.com/es/download/
+y, el Java Development Kit (JDK) pero para el mismo existe una opción que viene en 
+conjunto con NetBeans, que se puede obtener en 
+https://www.oracle.com/technetwork/es/java/javase/downloads/jdk-netbeans-jsp-3413139-esa.html
