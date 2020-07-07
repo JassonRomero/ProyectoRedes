@@ -13,7 +13,7 @@ y, el Java Development Kit (JDK) pero para el mismo existe una opción que viene
 conjunto con NetBeans, que se puede obtener en 
 https://www.oracle.com/technetwork/es/java/javase/downloads/jdk-netbeans-jsp-3413139-esa.html
 
-## Pasos para instalar NetBeans y JDK
+## Pasos para instalar el software necesario junto con la obtención del código del proyecto.
 
 ### 1. Ir al la página de descarga de Oracle, donde se descarga en conjunto NetBeans y JDK
 
